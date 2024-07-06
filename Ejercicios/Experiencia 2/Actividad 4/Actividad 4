@@ -1,0 +1,64 @@
+def solicitar_ventas():
+    productos = {
+        "Pan ciabatta": 2000,
+        "Pie de limón": 3500,
+        "Café": 2200,
+        "Té": 1600,
+        "Alfajor": 1000
+    }
+    
+    ventas = {}
+
+    for producto in productos:
+        while True:
+            try:
+                cantidad = int(input(f"Ingrese la cantidad vendida de {producto}: "))
+                if cantidad < 0:
+                    raise ValueError("La cantidad no puede ser negativa.")
+                ventas[producto] = cantidad
+                break
+            except ValueError as e:
+                print(f"Entrada inválida: {e}. Por favor, ingrese un número entero positivo.")
+            except Exception as e:
+                print(f"Ocurrió un error inesperado: {e}. Inténtalo nuevamente.")
+    
+    return ventas, productos
+
+def calcular_totales(ventas, productos):
+    total_ventas = 0
+    ventas_por_producto = {}
+
+    for producto, cantidad in ventas.items():
+        total = cantidad * productos[producto]
+        ventas_por_producto[producto] = total
+        total_ventas += total
+    
+    return ventas_por_producto, total_ventas
+
+def guardar_informe(ventas_por_producto, total_ventas):
+    informe = "\nInforme de Ventas Diarias\n\n"
+    for producto, total in ventas_por_producto.items():
+        informe += f"{producto}: ${total}\n"
+    informe += f"\nTotal de ventas del día: ${total_ventas}\n"
+
+    try:
+        with open("informe_ventas.txt", "w") as file:
+            file.write(informe)
+        print("Informe guardado exitosamente en 'informe_ventas.txt'.")
+    except IOError as e:
+        print(f"Error al guardar el archivo: {e}")
+    finally:
+        print("Proceso de guardado completado.")
+
+def generar_informe_ventas():
+    ventas, productos = solicitar_ventas()
+    ventas_por_producto, total_ventas = calcular_totales(ventas, productos)
+    
+    print("\nInforme de Ventas Diarias\n")
+    for producto, total in ventas_por_producto.items():
+        print(f"{producto}: ${total}")
+    print(f"\nTotal de ventas del día: ${total_ventas}")
+    
+    guardar_informe(ventas_por_producto, total_ventas)
+
+generar_informe_ventas()
